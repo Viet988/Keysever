@@ -2,20 +2,50 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Cho phép HTML gọi API từ domain khác
 app.use(cors());
+app.use(express.json());
 
-// Danh sách key mẫu
-const keys = ['cocut','concac','daubuoi'];
+// ✅ List key hợp lệ
+const validKeys = [
+    'thuy2008',
+    'key123',
+    'key456',
+    'user001'
+];
 
-// Endpoint validate
-app.get('/api/validate', (req, res) => {
-  const key = req.query.key;
-  if(!key) return res.json({ok:false, message:'Missing key'});
-  if(keys.includes(key)) return res.json({ok:true});
-  return res.json({ok:false});
+// Dummy dự đoán MD5
+function predictMD5(md5, algo) {
+    // Logic thật bạn sẽ tự thêm
+    // Hiện tại chỉ demo trả ngẫu nhiên
+    return {
+        prediction: Math.random() > 0.5 ? 'Tài' : 'Xỉu',
+        confidence: Math.floor(Math.random() * 21) + 80 // 80-100%
+    };
+}
+
+// Route predict
+app.post('/predict', (req, res) => {
+    const { md5, algo, key } = req.body;
+
+    if (!key || !validKeys.includes(key)) {
+        return res.status(403).json({ error: 'Key invalid hoặc hết hạn' });
+    }
+
+    const result = predictMD5(md5, algo);
+    res.json(result);
 });
 
-// Lắng nghe port từ Render
+// Route test server
+app.get('/', (req, res) => {
+    res.send('Server đang chạy. Chọn POST /predict để dự đoán.');
+});
+
+// Route validate key
+app.post('/validate', (req, res) => {
+    const { key } = req.body;
+    if (validKeys.includes(key)) return res.json({ valid: true });
+    return res.json({ valid: false });
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server chạy trên port ${PORT}`));
