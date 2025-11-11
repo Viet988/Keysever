@@ -7,10 +7,10 @@ app.use(express.json());
 
 // ✅ List key hợp lệ
 const validKeys = [
-    'thuy2008',
-    'key123',
-    'key456',
-    'user001'
+    'hayminhyeunhaunhe',
+    'lamnytuidi',
+    'uwu',
+    'ctezudaytroi'
 ];
 
 // Dummy dự đoán MD5
